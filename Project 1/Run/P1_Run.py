@@ -3,6 +3,7 @@ import numpy as np
 from random import random
 from imageio import imread
 import matplotlib.pyplot as plt
+from P1_Class import Data_reg
 
 # Make data.
 x = np.linspace(0, 1, 100)
