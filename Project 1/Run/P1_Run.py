@@ -16,26 +16,29 @@ def FrankeFunction(x, y):
     term4 = -0.2 * np.exp(-(9 * x - 4) ** 2 - (9 * y - 7) ** 2)
     return term1 + term2 + term3 + term4
 
-z = FrankeFunction(x, y) + np.random.normal(0, 10 ** (-4), x.shape)
+z = FrankeFunction(x, y) + np.random.normal(0, 10 ** (-4), x.shape) # Add noise
 
+# Perform OLS for 5the degree and plotting the result
 A = Data_reg(x, y, z)
 A.Set_up_data()
 A.PlaneOLSReg()
 A.Plot_fitted_and_data(figname = "Figure10.png")
-print("R^2 =", A.R2(A.Pred_data(A.X_test), A.z_test))
+print("R^2 =", A.R2(A.Pred_data(A.X_test), A.z_test)) # Calculating the R^2 value
 
 
-# OLS #
+# OLS analysis for Franke function #
 deg_list = range(30)
 
 # EPE #
 EPE = np.zeros((len(deg_list), 2))
-for i in deg_list:
+for i in deg_list: # Loop over degrees and calculating MSE for training and test dataset
     A.Set_up_data(deg = i)
     A.PlaneOLSReg()
     temp_MSE_train = A.EstPredErr(A.Pred_data(A.X_train), A.z_train)
     temp_MSE_test = A.EstPredErr(A.Pred_data(A.X_test), A.z_test)
     EPE[i] = np.array([temp_MSE_train, temp_MSE_test])
+
+# Plotting result
 plt.figure()
 plt.plot(deg_list, EPE[:, 0])
 plt.plot(deg_list, EPE[:, 1])
@@ -52,10 +55,11 @@ plt.savefig("Figure01.png")
 err = np.zeros(len(deg_list))
 bias = np.zeros(len(deg_list))
 var = np.zeros(len(deg_list))
-for i in deg_list:
+for i in deg_list: # Performing Bootstrap over degrees for OLS
     A.Set_up_data(deg = i)
     err[i], bias[i], var[i] = A.Bootstrapper()
 
+# Plotting result
 plt.figure()
 plt.plot(deg_list, err)
 plt.plot(deg_list, bias)
@@ -71,10 +75,11 @@ plt.savefig("Figure02.png")
 # Cross Validation #
 MSE_est = np.zeros(len(deg_list))
 
-for i in deg_list:
+for i in deg_list: # CV over degree for OLS
     A.Set_up_data(deg = i)
     MSE_est[i] = A.Cross_Validationer()
 
+# Plotting
 plt.figure()
 plt.plot(deg_list, MSE_est)
 plt.plot(deg_list, err)
@@ -89,7 +94,7 @@ plt.savefig("Figure03.png")
 plt.show()
 
 
-# Ridge #
+# Ridge analysis. The same as OLS just with lambda instead of polydegree #
 lam_list = np.linspace(-20, 50, 100)
 
 # EPE #
@@ -154,7 +159,7 @@ plt.savefig("Figure06.png")
 plt.show()
 
 
-# Lasso #
+# Lasso analysis like what we did Ridge above #
 lam_list = np.linspace(-20, 50, 100)
 
 # EPE #
@@ -218,12 +223,14 @@ plt.savefig("Figure09.png")
 
 plt.show()
 
+
+# Performing the analysis with real data
 # Load Data of Oslo fjord
 terrain = imread("n59_e010_1arc_v3.tif")
-# Can only look at n X n data so must remove some values in y direction
+# Reducing the area we look at to make the analysis manageable
 z = terrain[0:int(terrain.shape[1] / 5), 0:int(terrain.shape[1] / 5)]
 
-# Show data
+# Show data image
 plt.figure()
 plt.title("Terrain of Finnemarka")
 plt.imshow(z, cmap = "gist_earth")
@@ -238,9 +245,9 @@ y = np.linspace(0, z.shape[0], z.shape[0])
 x, y = np.meshgrid(x, y)
 
 
-A = Data_reg(x, y, z)
+A = Data_reg(x, y, z) # Initialising the class
 
-# OLS #
+# OLS Analysis like for the franke function #
 deg_list = range(30)
 
 # Defining arrays
@@ -306,7 +313,7 @@ plt.savefig("Figure13.png")
 plt.show()
 
 
-# Ridge #
+# Ridge analysis #
 
 lam_list = np.linspace(-10, 5, 29)
 
@@ -374,7 +381,7 @@ plt.savefig("Figure16.png")
 plt.show()
 
 
-# Lasso #
+# Lasso analysis #
 
 # EPE #
 # Performing analysis
@@ -433,10 +440,10 @@ plt.savefig("Figure19.png")
 
 plt.show()
 
-
-# OLS #
+# Performing analysis of best fit models
 deg_list = range(30)
 
+# OLS Best fit polynomial#
 # Defining arrays
 EPE = np.zeros((len(deg_list), 2))
 MSE_est = np.zeros(len(deg_list))
@@ -459,7 +466,7 @@ err_OLS, _, _ = A.Bootstrapper()
 MSE_est_OLS = A.Cross_Validationer()
 
 
-# Ridge #
+# Ridge degree analysis #
 # Performing analysis
 for i in deg_list:
     # EPE
@@ -519,7 +526,7 @@ plt.show()
 
 """
 This Doesn't converge ever, so don't run this
-# Lasso #
+# Lasso degree analysis #
 
 # EPE #
 # Performing analysis
@@ -580,7 +587,7 @@ plt.savefig("Figure26.png")
 plt.show()
 """
 
-# Performing analysis
+# Best fit Ridge model
 # EPE
 A.Set_up_data(deg = 23, lam = 0.1)
 A.PlaneRidgeReg()
@@ -594,6 +601,7 @@ err_Ridge, _, _ = A.Bootstrapper(method = "Ridge")
 # Cross Validation
 MSE_est_Ridge = A.Cross_Validationer(method = "Ridge")
 
+# Printing the resulting table for best fit models
 print("        OLS   Ridge")
 print("MSE =", EPE_OLS[0], EPE_Ridge[0])
 print("BS MSE =", err_OLS, err_Ridge)

@@ -1,3 +1,4 @@
+# Imports
 import numpy as np
 from matplotlib import cm
 import matplotlib.pyplot as plt
@@ -12,11 +13,13 @@ class Data_reg():
     """
 
     def __init__(self, x, y, z):
+        # Initiate data and scale #
         self.x = scale(x, axis = 1)
         self.y = scale(y, axis = 0)
         self.z = z
     
     def Set_up_data(self, deg = 5, lam = 0):
+        # Set up data matrix X #
         self.Lambda = lam
         self.X = np.zeros((len(self.z), np.sum(range(deg + 2))))
         for i in range(deg + 1):
@@ -24,9 +27,11 @@ class Data_reg():
                 self.X[:, int(np.sum(range(i + 1))) + j] = self.x[0] ** (i - j) * self.y[:, 0] ** j
 
     def _Split_data(self, ratio = 0.2):
+        # Split the Data into test and training groups #
         self.X_train, self.X_test, self.z_train, self.z_test = train_test_split(self.X, self.z, test_size = ratio)
 
     def PlaneOLSReg(self, X_train = None, z_train = None, ratio = 0.2):
+        # Train the OLS model #
         self._Split_data(ratio)
 
         if X_train is None:
@@ -39,6 +44,7 @@ class Data_reg():
         return self.beta
     
     def PlaneRidgeReg(self, X_train = None, z_train = None, ratio = 0.2):
+        # Train the Ridge model #
         self._Split_data(ratio)
 
         if X_train is None:
@@ -51,6 +57,7 @@ class Data_reg():
         return self.beta
     
     def PlaneLassoReg(self, X_train = None, z_train = None, ratio = 0.2):
+        # Train the Lasso model #
         self._Split_data(ratio)
 
         if X_train is None:
@@ -63,6 +70,7 @@ class Data_reg():
         return self.beta
 
     def Pred_data(self, X, method = None):
+        # Use a specified method to predict data #
         if method == "Lasso":
             z_pred = self.beta.predict(X)
         else:
@@ -91,6 +99,7 @@ class Data_reg():
         plt.show()
 
     def EstPredErr(self, z_pred, z):
+        # Calculate MSE as the estimated prediction error
         if len(z_pred.shape) > 2:
             liste = np.zeros(len(z_pred[:, :]))
             for i in range(len(liste)):
@@ -100,6 +109,7 @@ class Data_reg():
             return np.mean((z - z_pred) ** 2)
 
     def R2(self, z_pred, z):
+        # Calcualte the R^2 value for the preditions
         if len(z_pred.shape) > 2:
             liste = np.zeros(len(z_pred[:, :]))
             for i in range(len(liste)):
@@ -109,6 +119,7 @@ class Data_reg():
             return 1 - np.sum((z - z_pred) ** 2) / np.sum((z - np.mean(z_pred)) ** 2)
 
     def Bootstrapper(self, n_boots = 10 ** 2, method = "OLS"):
+        # Perform the bootstrap analysis #
         if method == "OLS":
             reg_func = self.PlaneOLSReg
         elif method == "Ridge":
@@ -134,6 +145,7 @@ class Data_reg():
         return err, bias, var
     
     def Cross_Validationer(self, k = 5, method = "OLS"):
+        # Performing the Cross Validation #
         if method == "OLS":
             reg_func = self.PlaneOLSReg
         elif method == "Ridge":
