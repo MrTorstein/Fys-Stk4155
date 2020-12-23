@@ -1,7 +1,9 @@
+import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.table import QTable
-from P3_Class import NN_Reg, Data_reg
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from Class.P3_Class import NN_Reg, Data_reg
 
 
 # Extracting data
@@ -57,7 +59,7 @@ plt.plot(range(1, 31), MSE_Ridge)
 plt.legend(["NN", "OLS", "Ridge"])
 plt.xlabel("Complexity of model")
 plt.ylabel("MSE")
-plt.savefig("Results/Figure1.png")
+plt.savefig("Run/Figure1.png")
 
 
 # Using a good fit to make a prediction of the whole dataset and ploting result
@@ -96,6 +98,6 @@ plt.title("Complexity of models = %i"%degree)
 plt.xlabel("Readshift z")
 plt.ylabel("Star Formation Rate [Solar mass per year]")
 plt.legend(["NN Predictions", "OLS Prediction", "Ridge Prediction", "Data Points"])
-plt.savefig("Results/Figure2.png")
+plt.savefig("Run/Figure2.png")
 
 plt.show()

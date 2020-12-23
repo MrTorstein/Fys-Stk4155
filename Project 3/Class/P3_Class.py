@@ -3,28 +3,6 @@ from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
 
 
-"""
-f(z) = 1 / (1 + exp(-z))
-C = 1/2 sum_(i=1->n)(y_i - t_i)^2 = 1/2 sum_(i=1->n)(a_i_L - t_i)^2
-M_(l-1) is number of nurons in layer l-1
-z_j_l = sum_(i=1->M_(l-1))(w_i_j_l * a_i_(l-1) + b_j_l)  evt.  z_l = (W_l)^T * a_(l-1) + b_l
-a_j_l = f(z_j_l)
-
-dz_j_l/dw_i_j_l = a_j_(l-1)
-dz_j_l/da_j_(l-1) = w_i_j_l
-da_j_l/dz_j_l = f(z_j_l)(1 - f(z_j_l))
-
-dC/dw_j_k_L = (a_j_L - t_j) * a_j_L(1 - a_j_L)a_k_(L-1) = delta_j_L * a_k_(L-1)
-dC/da_j_L = 
-
-Set up x, z_1 and calc f(z_l) and a_1
-Perform FF, find z_l and a_l for l = 2, 3, ..., L
-delta_L_j = df/dz_L_j * dC/da_L_j
-l = L - 1, L - 2, L - 3, ..., 2
-delta_l_j = sum_k( delta_k_(l+1) * w_k_j_(l+1) * df/dz_l_j )
-w_j_k_l = w_j_k_l - eta * delta_j_l * a_k_(l-1)
-b_j_l = b_j_l - eta * delta_j_l
-"""
 
 
 class Data_reg():
@@ -193,7 +171,7 @@ class NN_Reg:
         self.b_h = self.b_h - self.eta * self.b_h_gradient
 
     def Pred_data(self, X = False):
-        if X == False:
+        if type(X) == type(False):
             X = self.X_test
 
         # Uses the model to predict values #
@@ -206,9 +184,9 @@ class NN_Reg:
         # Predict values and return their probabilities #
         return self._FF_o(X)
 
-    def Train(self):
+    def Train(self, ratio = 0.2):
         # Train the model using train data #
-        self._Split_data()
+        self._Split_data(ratio)
 
         if self.a_func == False:
             print("Setting activation function to the Sigmoid function")
