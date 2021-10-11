@@ -1,9 +1,12 @@
 """ This takes a long time to run, but suit yourselves """
+import sys
+sys.path.append("../")
+
 import numpy as np
 from random import random
 from imageio import imread
 import matplotlib.pyplot as plt
-from P1_Class import Data_reg
+from Class.P1_Class import Data_reg
 
 # Make data.
 x = np.linspace(0, 1, 100)
@@ -17,14 +20,26 @@ def FrankeFunction(x, y):
     term4 = -0.2 * np.exp(-(9 * x - 4) ** 2 - (9 * y - 7) ** 2)
     return term1 + term2 + term3 + term4
 
-z = FrankeFunction(x, y) + np.random.normal(0, 10 ** (-4), x.shape) # Add noise
+z = FrankeFunction(x, y) + np.random.normal(0, 1, x.shape) # Add noise
 
-# Perform OLS for 5the degree and plotting the result
+# Perform OLS for 1st-5th degree and plotting the result
+deg_list = range(6)
+
 A = Data_reg(x, y, z)
-A.Set_up_data()
-A.PlaneOLSReg()
-A.Plot_fitted_and_data(figname = "Figure10.png")
-print("R^2 =", A.R2(A.Pred_data(A.X_test), A.z_test)) # Calculating the R^2 value
+R_list = []
+for i in deg_list:
+    A.Set_up_data(deg = i)
+    A.PlaneOLSReg()
+    R_list.append(A.R2(A.Pred_data(A.X_test), A.z_test)) # Calculating the R^2 value
+A.Plot_fitted_and_data(figname = "Figure10.png", Block = False)
+
+plt.figure()
+plt.title(r"$R^2$ for OLS")
+plt.xlabel("Polynomial degree")
+plt.ylabel(r"$R^2$")
+plt.plot(deg_list, R_list)
+plt.savefig("Figure00.png")
+plt.show()
 
 
 # OLS analysis for Franke function #
@@ -96,7 +111,7 @@ plt.show()
 
 
 # Ridge analysis. The same as OLS just with lambda instead of polydegree #
-lam_list = np.linspace(-20, 50, 100)
+lam_list = np.linspace(-10, 5, 100)
 
 # EPE #
 EPE = np.zeros((len(lam_list), 2))
@@ -161,7 +176,6 @@ plt.show()
 
 
 # Lasso analysis like what we did Ridge above #
-lam_list = np.linspace(-20, 50, 100)
 
 # EPE #
 EPE = np.zeros((len(lam_list), 2))
@@ -227,7 +241,7 @@ plt.show()
 
 # Performing the analysis with real data
 # Load Data of Oslo fjord
-terrain = imread("n59_e010_1arc_v3.tif")
+terrain = imread("../Data/n59_e010_1arc_v3.tif")
 # Reducing the area we look at to make the analysis manageable
 z = terrain[0:int(terrain.shape[1] / 5), 0:int(terrain.shape[1] / 5)]
 
@@ -313,10 +327,7 @@ plt.savefig("Figure13.png")
 
 plt.show()
 
-
 # Ridge analysis #
-
-lam_list = np.linspace(-10, 5, 29)
 
 # Defining arrays
 EPE = np.zeros((len(lam_list), 2))
@@ -381,7 +392,6 @@ plt.savefig("Figure16.png")
 
 plt.show()
 
-
 # Lasso analysis #
 
 # EPE #
@@ -442,7 +452,6 @@ plt.savefig("Figure19.png")
 plt.show()
 
 # Performing analysis of best fit models
-deg_list = range(30)
 
 # OLS Best fit polynomial#
 # Defining arrays
@@ -524,69 +533,6 @@ plt.savefig("Figure23.png")
 
 plt.show()
 
-
-"""
-This Doesn't converge ever, so don't run this
-# Lasso degree analysis #
-
-# EPE #
-# Performing analysis
-for i in deg_list:
-    print(i)
-    # EPE
-    A.Set_up_data(deg = i, lam = 0)
-    A.PlaneLassoReg()
-    temp_MSE_train = A.EstPredErr(A.Pred_data(A.X_train, "Lasso"), A.z_train)
-    temp_MSE_test = A.EstPredErr(A.Pred_data(A.X_test, "Lasso"), A.z_test)
-    EPE[i] = np.array([temp_MSE_train, temp_MSE_test])
-
-    # Bootstrap
-    err[i], bias[i], var[i] = A.Bootstrapper(method = "Lasso")
-
-    # Cross Validation
-    MSE_est[i] = A.Cross_Validationer(method = "Lasso")
-
-# Plotting results 
-# EPE 
-plt.figure()
-plt.plot(deg_list, EPE[:, 0])
-plt.plot(deg_list, EPE[:, 1])
-
-plt.legend(["train", "test"])
-plt.xlabel("Polynomial degree")
-plt.ylabel("Estimated prediction error")
-plt.yscale("log")
-plt.title("Lasso: Error plot")
-plt.savefig("Figure24.png")
-
-# Bootstrap #
-plt.figure()
-plt.plot(deg_list, err)
-plt.plot(deg_list, bias)
-plt.plot(deg_list, var)
-
-plt.yscale("log")
-plt.legend(["err", "bias", "var"])
-plt.xlabel("Polynomial degree")
-plt.title("Lasso: Bootstrap")
-plt.savefig("Figure25.png")
-
-
-# Cross Validation #
-plt.figure()
-plt.plot(deg_list, MSE_est)
-plt.plot(deg_list, err)
-
-plt.yscale("log")
-plt.legend(["MSE", "Bootstrap_MSE"])
-plt.xlabel("Polynomial degree")
-plt.ylabel("MSE")
-plt.title("Lasso: Cross Validation")
-plt.savefig("Figure26.png")
-
-
-plt.show()
-"""
 
 # Best fit Ridge model
 # EPE

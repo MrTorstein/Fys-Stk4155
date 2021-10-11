@@ -77,7 +77,7 @@ class Data_reg():
             z_pred = X @ self.beta
         return z_pred
     
-    def Plot_fitted_and_data(self, figname = "Figure99.png"):
+    def Plot_fitted_and_data(self, figname = "Figure99.png", Block = True):
         # Plot the resulting fit beside the original surface
         fig = plt.figure()
 
@@ -96,7 +96,7 @@ class Data_reg():
         plt.ylabel("y")
 
         plt.savefig(figname)
-        plt.show()
+        plt.show(block = Block)
 
     def EstPredErr(self, z_pred, z):
         # Calculate MSE as the estimated prediction error
