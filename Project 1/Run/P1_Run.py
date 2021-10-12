@@ -44,7 +44,7 @@ plt.show()
 
 # OLS analysis for Franke function #
 deg_list = range(30)
-"""
+
 # EPE #
 EPE = np.zeros((len(deg_list), 2))
 for i in deg_list: # Loop over degrees and calculating MSE for training and test dataset
@@ -109,10 +109,10 @@ plt.savefig("Figure03.png")
 
 plt.show()
 
-"""
+
 # Ridge analysis. The same as OLS just with lambda instead of polydegree #
 lam_list = np.linspace(-10, 5, 100)
-"""
+
 # EPE #
 EPE = np.zeros((len(lam_list), 2))
 for i in range(len(lam_list)):
@@ -238,7 +238,7 @@ plt.savefig("Figure09.png")
 
 plt.show()
 
-"""
+
 # Performing the analysis with real data
 # Load Data of Oslo fjord
 terrain = imread("../Data/n59_e010_1arc_v3.tif")
@@ -264,7 +264,7 @@ A = Data_reg(x, y, z) # Initialising the class
 
 # OLS Analysis like for the franke function #
 deg_list = range(30)
-"""
+
 # Defining arrays
 EPE = np.zeros((len(deg_list), 2))
 MSE_est = np.zeros(len(deg_list))
@@ -450,7 +450,7 @@ plt.savefig("Figure19.png")
 
 
 plt.show()
-"""
+
 # Performing analysis of best fit models
 
 # OLS Best fit polynomial#
@@ -475,7 +475,7 @@ err_OLS, _, _ = A.Bootstrapper()
 # Cross Validation 
 MSE_est_OLS = A.Cross_Validationer()
 
-"""
+
 # Ridge degree analysis #
 # Performing analysis
 for i in deg_list:
@@ -533,7 +533,7 @@ plt.savefig("Figure23.png")
 
 plt.show()
 
-"""
+
 # Best fit Ridge model
 # EPE
 A.Set_up_data(deg = 8, lam = -0.5)
